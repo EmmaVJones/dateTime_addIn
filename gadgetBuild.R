@@ -41,7 +41,7 @@ as.POSIXct(dateVal, format="%m/%d/%Y %H:%M")
 
 
 
-dateTimeSwitcher <- function(dateVal){
+dateTimeSwitcher <- function(dateVal, separator, firstSelection,secondSelection,thirdSelection){
   as.POSIXct(dateVal, format = paste('%',firstSelection, separator,
                                      '%', secondSelection, separator,
                                      '%', thirdSelection, sep=''))
@@ -54,6 +54,9 @@ dateComponentChoices <- c('M','m','B','b','D','d','Y','y','H','h','M','m','S','s
 ui <- miniPage(
   gadgetTitleBar('Date Time Switcher'),
   miniContentPanel(
+    textOutput('originalFormat'),
+    hr(),
+    selectInput('sepDate', 'Date separation', choices = c('-','/','_',':',' ')),
     selectInput('select1','First Date Component', choices = dateComponentChoices),
     selectInput('select2','Second Date Component', choices = dateComponentChoices),
     selectInput('select3','Third Date Component', choices = dateComponentChoices),
@@ -67,11 +70,30 @@ ui <- miniPage(
 
 server <- function(input, output, session) {
  
+  output$originalFormat <- renderPrint({
+    dateVal
+  })
+  
+  dateFormat <- reactive({
+    req(input$sepDate, input$select1, input$select2, input$select3)
+    if(is.na(dateTimeSwitcher(dateVal, input$sepDate, input$select1, input$select2, input$select3))){
+      print('Incorrect Formatting')
+    } else {
+      dateTimeSwitcher(dateVal, input$sepDate, input$select1, input$select2, input$select3)
+    }
+  })
+  
   output$results <- renderPrint({
-    req(input$select1, input$select2, input$select3)
-    dateTimeSwitcher(dateVal, input$select1, input$select2, input$select3)
+    req(dateFormat())
+    dateFormat()
+      })
+  
+  observeEvent(input$done, {
+    stopApp(dateFormat())
   })
 }
+
+dateTimeSwitcher(dateVal,'/', 'm', 'd', 'Y')
 
 runGadget(shinyApp(ui, server), viewer = dialogViewer("dateFixer"))
     
