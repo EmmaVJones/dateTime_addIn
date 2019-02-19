@@ -1,0 +1,5 @@
+
+Name: Date Time FormatR
+Description: Interactively format the selected date(s) to POSIXct
+Binding: printInput
+Interactive: true

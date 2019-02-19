@@ -137,9 +137,7 @@ server <- function(input, output, session) {
   
   output$test <- renderPrint({
     input$add
-    #trimws(paste(input$txt1, input$txt2, input$txt3, input$txt4, input$txt5, 
-    #             input$txt6, input$txt7, input$txt8, input$txt9, input$text10, 
-    #             sep=''), 'r')
+   
   })
   
   dateFormat <- reactive({
@@ -162,7 +160,7 @@ server <- function(input, output, session) {
 }
 
 
-runGadget(shinyApp(ui, server), viewer = browserViewer())# dialogViewer("dateFixer"))# 
+runGadget(shinyApp(ui, server), viewer = dialogViewer("dateFixer", width = 400, height = 1000)) #browserViewer())# # 
 #dateTimeSwitcher(dateVal,'/', 'mon', 'd', 'Y')
 
 dateTimeSwitcher(dateVal, trimws(paste("%m","/",'%d',"/","%Y",' ',"%H",":","%M",  sep=''), 'r'))
